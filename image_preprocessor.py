@@ -8,5 +8,7 @@ class ImagePreprocessor:
         faces_rect = self.haar_cascade.detectMultiScale(grayscale_image)
         if len(faces_rect) > 0:
             (x, y, w, h) = faces_rect[0]
-            image = image[x:x+w, y:y+h]
-        return image
+            face = grayscale_image[x:x+w, y:y+h]
+            face = cv.resize(face, (image.shape[0], image.shape[1]), interpolation=cv.INTER_LINEAR)
+            grayscale_image = face
+        return grayscale_image

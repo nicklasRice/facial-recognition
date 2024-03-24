@@ -1,8 +1,6 @@
 import pathlib
 import cv2 as cv
 
-from image_preprocessor import ImagePreprocessor
-
 class Train:
     path = None
     image_preprocessor = None
@@ -19,6 +17,8 @@ class Train:
 
     def _label_data(self):
         for i, f in enumerate(self.path.iterdir()):
+            if i == 10:
+                break
             self.label_names.append(f.name)
             for im in f.iterdir():
                 image = cv.imread(str(im))

@@ -15,7 +15,7 @@ class Train:
         self.data_paths = paths
         self.image_preprocessor = image_preprocessor
         images, labels = self._label_data()
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(images, labels, test_size=split
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(images, labels, test_size=split,
                                                                                 stratify=labels)
 
     def _label_data(self):

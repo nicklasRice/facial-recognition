@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split, KFold
 
 class Train:
     data_paths = []
-    model = None
     image_preprocessor = None
     X_train = []
     y_train = []
@@ -12,10 +11,9 @@ class Train:
     label_to_name = []
 
 
-    def __init__(self, paths, model, image_preprocessor, split) -> None:
+    def __init__(self, paths, image_preprocessor, split) -> None:
         self.data_paths = paths
         self.image_preprocessor = image_preprocessor
-        self.model = model
         images, labels = self._label_data()
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(images, labels, test_size=split
                                                                                 stratify=labels)
@@ -40,19 +38,19 @@ class Train:
                     labels.append(label)
         return images, labels
 
-    def cross_validate(self, folds, metric):
+    def cross_validate(self, model, folds, metric):
         res = []
         kf = KFold(n_splits=folds)
         for (train_indices, test_indices) in kf.split(self.X_train):
-            self.model.train(self.X_train[train_indices], self.y_train[train_indices])
+            model.train(self.X_train[train_indices], self.y_train[train_indices])
             true = [self.y_train[i] for i in test_indices]
-            predicted = [self.model.predict(self.X_train[i]) for i in test_indices]
+            predicted = [model.predict(self.X_train[i]) for i in test_indices]
             res.append(metric(true, predicted))
         return res
 
-    def train(self):
-        self.model.train(self.X_train, self.y_train)
+    def train(self, model):
+        model.train(self.X_train, self.y_train)
     
-    def test(self, metric):
-        predicted = [self.model.predict(x) for x in self.X_test]
+    def test(self, model, metric):
+        predicted = [model.predict(x) for x in self.X_test]
         return metric(self.y_test, predicted)

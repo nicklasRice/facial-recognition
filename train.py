@@ -1,5 +1,6 @@
 import cv2 as cv
 from sklearn.model_selection import train_test_split, KFold
+import numpy as np
 
 class Train:
     data_paths = []
@@ -17,6 +18,10 @@ class Train:
         images, labels = self._label_data()
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(images, labels, test_size=split,
                                                                                 stratify=labels)
+        self.X_train = np.array(self.X_train)
+        self.X_test = np.array(self.X_test)
+        self.y_train = np.array(self.y_train)
+        self.y_test = np.array(self.y_test)
 
     def _label_data(self):
         images = []
@@ -43,8 +48,8 @@ class Train:
         kf = KFold(n_splits=folds)
         for (train_indices, test_indices) in kf.split(self.X_train):
             model.train(self.X_train[train_indices], self.y_train[train_indices])
-            true = [self.y_train[i] for i in test_indices]
-            predicted = [model.predict(self.X_train[i]) for i in test_indices]
+            true = self.y_train[test_indices]
+            predicted = [model.predict(self.X_train[i])[0] for i in test_indices]
             res.append(metric(true, predicted))
         return res
 

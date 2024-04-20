@@ -26,7 +26,7 @@ import pathlib
 parentParser = argparse.ArgumentParser(add_help=False)
 parentParser.add_argument('data', type=pathlib.Path, nargs='+', help='path to data')
 parentParser.add_argument('-s', '--split', type=float help='train-test split', default=0)
-parentParser.add_argument('-c', '--cross', help='cross validation', action='store_true', default=False)
+parentParser.add_argument('-c', '--cross', type=int, help='cross validation', default=0)
 parentParser.add_argument('-ns', '--no-save', dest='save', help='do not save model', action='store_false',
                           default=True)
 parentParser.add_argument('-m', '--metric', help='metric(s) to evaluate', nargs='+', choices=['accuracy'])

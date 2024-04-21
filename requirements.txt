@@ -1,0 +1,8 @@
+Required packages:
+  - OpenCV
+  - NumPy
+  - scikit-learn
+
+This program is intended to be run at the command line. Use
+  python facial_recognition.py --help
+to see what options are available.

@@ -91,5 +91,5 @@ parser_fisher.set_defaults(func=fisher)
 parser_lbph = subparsers.add_parser('lbph', parents=[parentParser], description='LBPH')
 parser_lbph.set_defaults(func=lbph)
     
-args = parser.parse_args('eigen C:/Users/nickl/COP4930/final_project/small_images -s .2 -p 10 -e eva eve mean'.split())
+args = parser.parse_args()
 args.func(args)

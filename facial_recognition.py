@@ -49,6 +49,7 @@ def common(args, model):
     metric_options = {"accuracy": sklearn.metrics.accuracy_score}
     metrics = [metric_options[m] for m in args.metric]
     if args.cross is not None:
+        print("cross validation")
         for name, metric in zip(args.metric, metrics):
             res = train.cross_validate(model, args.cross, metric)
             print('{metric}:'.format(metric=name))
@@ -58,6 +59,10 @@ def common(args, model):
         train.train(model)
     if args.save:
         model.write('model.yaml')
+    print('testing')
+    for name, metric in zip(args.metric, metrics):
+        print('{metric}:'.format(metric=name))
+        print(train.test(model, metric))
     return train
     
 

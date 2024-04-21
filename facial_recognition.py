@@ -21,7 +21,8 @@ def eigen(args):
     if 'eva' in args.esave:
         np.savetxt('eigenvalues.txt', eigenvalues, delimiter=',')
     if 'eve' in args.esave:
-        os.mkdir('eigenfaces')
+        if not os.path.isdir('eigenfaces'):
+            os.mkdir('eigenfaces')
         for i in range(model.getNumComponents()):
             ev = eigenvectors[i, :]
             ev = ev.reshape(train.dimensions)

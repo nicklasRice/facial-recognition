@@ -6,7 +6,7 @@ import cv2 as cv
 import numpy as np
 import sklearn.metrics
 
-
+# old code #
 '''
 def eigen(args):
     model = face.EigenFaceRecognizer.create()

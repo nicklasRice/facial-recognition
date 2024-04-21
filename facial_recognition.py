@@ -48,15 +48,15 @@ def common(args, model):
     train = Train(args.data, ImagePreprocessor(), args.split)
     metric_options = {"accuracy": sklearn.metrics.accuracy_score}
     metrics = [metric_options[m] for m in args.metric]
-    if args.cross != None:
+    if args.cross is not None:
         for name, metric in zip(args.metric, metrics):
             res = train.cross_validate(model, args.cross, metric)
             print('{metric}:'.format(metric=name))
             pprint.pprint(res)
             print('\n')
-    if args.model == None:
+    if args.model is None:
         train.train(model)
-    if (args.save):
+    if args.save:
         model.write('model.yaml')
     return train
     
@@ -66,12 +66,10 @@ import pathlib
 
 parentParser = argparse.ArgumentParser(add_help=False)
 parentParser.add_argument('data', type=pathlib.Path, nargs='+', help='path to data')
-parentParser.add_argument('-s', '--split', type=float, help='train-test split', default=0)
+parentParser.add_argument('-s', '--split', type=float, help='train-test split', default=0.5)
 parentParser.add_argument('-c', '--cross', type=int, help='cross validation')
-parentParser.add_argument('-ns', '--no-save', dest='save', help='do not save model', action='store_false',
-                          default=True)
-parentParser.add_argument('-m', '--metric', help='metric(s) to evaluate', nargs='+', choices=['accuracy'],
-                          default=['accuracy'])
+parentParser.add_argument('-ns', '--no-save', dest='save', help='do not save model', action='store_false', default=True)
+parentParser.add_argument('-m', '--metric', help='metric(s) to evaluate', nargs='+', choices=['accuracy'], default=['accuracy'])
 parentParser.add_argument('-mo', '--model', type=pathlib.Path, help='path to saved model')
 
 parser = argparse.ArgumentParser(description='Facial recognition with OpenCV')

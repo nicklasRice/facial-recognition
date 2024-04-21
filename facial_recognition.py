@@ -1,26 +1,46 @@
 import pprint
 from train import Train
 from image_preprocessor import ImagePreprocessor
-from cv2 import face
+import cv2 as cv
 import sklearn.metrics
+import numpy as np
+import os
 
 def eigen(args):
-    model = face.EigenFaceRecognizer.create()
+    model = cv.face.EigenFaceRecognizer.create()
+    if args.components != None:
+        model = cv.face.EigenFaceRecognizer.create(args.components)
     if args.model != None:
-        model = face.EigenFaceRecognizer.read(str(args.model))
-    common(args, model)
+        model = cv.face.EigenFaceRecognizer.read(str(args.model))
+    train = common(args, model)
+    eigenvalues = model.getEigenValues()
+    eigenvectors = model.getEigenVectors().T
+    mean = model.getMean()
+    if 'mean' in args.esave:
+        np.save('mean.npy', mean)
+    if 'eva' in args.esave:
+        np.savetxt('eigenvalues.txt', eigenvalues, delimiter=',')
+    if 'eve' in args.esave:
+        os.mkdir('eigenfaces')
+        for i in range(model.getNumComponents()):
+            ev = eigenvectors[i, :]
+            ev = ev.reshape(train.dimensions)
+            normalized = np.zeros(ev.shape)
+            cv.normalize(ev, normalized, 0, 255, cv.NORM_MINMAX)
+            colored = cv.applyColorMap(normalized.astype(np.uint8), cv.COLORMAP_JET)
+            cv.imwrite('eigenfaces/eigenface{i}.png'.format(i=i), colored)
 
 
 def fisher(args):
-    model = face.FisherFaceRecognizer.create()
+    model = cv.face.FisherFaceRecognizer.create()
     if args.model != None:
-        model = face.FisherFaceRecognizer.read(str(args.model))
+        model = cv.face.FisherFaceRecognizer.read(str(args.model))
     common(args, model)
 
 def lbph(args):
-    model = face.LBPHFaceRecognizer.create()
+    model = cv.face.LBPHFaceRecognizer.create()
     if args.model != None:
-        model = face.LBPHFaceRecognizer.read(str(args.model))
+        model = cv.face.LBPHFaceRecognizer.read(str(args.model))
     common(args, model)
 
 def common(args, model):
@@ -37,6 +57,7 @@ def common(args, model):
         train.train(model)
     if (args.save):
         model.write('model.yaml')
+    return train
     
 
 import argparse
@@ -57,12 +78,14 @@ subparsers = parser.add_subparsers(help='subcommands', required=True)
 
 parser_eigen = subparsers.add_parser('eigen', parents=[parentParser], description='Eigenfaces')
 parser_eigen.set_defaults(func=eigen)
+parser_eigen.add_argument('-p', '--components', type=int, help='number of principal components')
+parser_eigen.add_argument('-e', '--save', dest='esave', nargs='+', choices=['mean', 'eva', 'eve'])
 
 parser_fisher = subparsers.add_parser('fisher', parents=[parentParser], description='Fisherfaces')
 parser_fisher.set_defaults(func=fisher)
 
 parser_lbph = subparsers.add_parser('lbph', parents=[parentParser], description='LBPH')
 parser_lbph.set_defaults(func=lbph)
-
-args = parser.parse_args()
+    
+args = parser.parse_args('eigen C:/Users/nickl/COP4930/final_project/small_images -s .2 -p 10 -e eva eve mean'.split())
 args.func(args)

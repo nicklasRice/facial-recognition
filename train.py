@@ -10,6 +10,7 @@ class Train:
     X_test = []
     y_test = []
     label_to_name = []
+    dimensions = None
 
 
     def __init__(self, paths, image_preprocessor, split) -> None:
@@ -19,6 +20,7 @@ class Train:
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(images, labels, test_size=split,
                                                                                 stratify=labels)
         self.X_train = np.array(self.X_train)
+        self.dimensions = (self.X_train.shape[1], self.X_train.shape[2])
         self.X_test = np.array(self.X_test)
         self.y_train = np.array(self.y_train)
         self.y_test = np.array(self.y_test)

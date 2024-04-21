@@ -59,5 +59,5 @@ class Train:
         model.train(self.X_train, self.y_train)
     
     def test(self, model, metric):
-        predicted = [model.predict(x) for x in self.X_test]
+        predicted = [model.predict(x)[0] for x in self.X_test]
         return metric(self.y_test, predicted)
